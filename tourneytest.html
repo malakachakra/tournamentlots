@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tournament Entry</title>
+  <script>
+    async function submitEntry(event) {
+      event.preventDefault();
+
+      const psnHandle = document.getElementById('psn').value;
+      const redditHandle = document.getElementById('reddit').value;
+
+      const ipResponse = await fetch('https://api.ipify.org?format=json'); // IP API
+      const ipData = await ipResponse.json();
+      const ipAddress = ipData.ip;
+
+      const submissionData = {
+        psnHandle,
+        redditHandle,
+        ipAddress
+      };
+
+      const response = await fetch('AKfycbxOme4tF-nTETzB2CrVtyj89c_Oi272IOVz2MC3Hmc', { 
+        method: 'POST',
+        body: new URLSearchParams(submissionData)
+      });
+
+      const result = await response.json();
+      if (result.status === 'success') {
+        document.getElementById('message').innerHTML = `
+          <p>You're entered!</p>
+          <p>${result.entriesRemaining}/50 Entries remaining</p>
+        `;
+      } else {
+        document.getElementById('message').innerHTML = `<p>Error: ${result.message}</p>`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Enter the Tournament</h1>
+  <form onsubmit="submitEntry(event)">
+    <label for="psn">PSN Handle:</label><br>
+    <input type="text" id="psn" name="psnHandle" required><br>
+    <label for="reddit">Reddit Handle:</label><br>
+    <input type="text" id="reddit" name="redditHandle" required><br>
+    <input type="submit" value="Enter">
+  </form>
+  <div id="message"></div>
+</body>
+</html>
